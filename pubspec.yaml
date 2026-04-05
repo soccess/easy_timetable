@@ -41,6 +41,9 @@ dependencies:
   sqlite3_flutter_libs: any
   path_provider: any
   path: any
+  excel: any
+  toml: any
+  syncfusion_flutter_datagrid: any
 
 dev_dependencies:
   flutter_test:
