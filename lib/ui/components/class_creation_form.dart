@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import '../../models/course_type.dart';
 import '../../utils/class_name_generator.dart';
 import '../../theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/database_providers.dart';
+import '../../database/app_database.dart';
 import 'cute_card.dart';
 
 class ClassCreationForm extends StatefulWidget {
@@ -13,17 +16,20 @@ class ClassCreationForm extends StatefulWidget {
 
 class _ClassCreationFormState extends State<ClassCreationForm> {
   CourseType _selectedCourse = CourseType.middle;
-  int _grade = 2;
-  int _classNumber = 1;
+  int _grade = 1;
+  int _classCount = 1;
+  int _weeklyHours = 30;
 
   final FocusNode _gradeFocus = FocusNode();
-  final FocusNode _classNumberFocus = FocusNode();
+  final FocusNode _classCountFocus = FocusNode();
+  final FocusNode _weeklyHoursFocus = FocusNode();
   final FocusNode _submitFocus = FocusNode();
 
   @override
   void dispose() {
     _gradeFocus.dispose();
-    _classNumberFocus.dispose();
+    _classCountFocus.dispose();
+    _weeklyHoursFocus.dispose();
     _submitFocus.dispose();
     super.dispose();
   }
@@ -67,8 +73,6 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
 
   @override
   Widget build(BuildContext context) {
-    final generatedName = generateClassName(_selectedCourse, _grade, _classNumber);
-
     return CuteCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,17 +123,37 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
           const SizedBox(height: 16),
           Row(
             children: [
-              Text('반: '),
+              Text('생성할 반 개수: '),
               Semantics(
-                label: '반 선택, 현재 $_classNumber반',
-                value: '$_classNumber',
+                label: '생성할 반 개수 선택, 현재 $_classCount개',
+                value: '$_classCount',
                 child: CupertinoStepper(
-                  value: _classNumber.toDouble(),
+                  value: _classCount.toDouble(),
                   min: 1,
                   max: 20,
                   onChanged: (value) {
                     setState(() {
-                      _classNumber = value.toInt();
+                      _classCount = value.toInt();
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text('주당 시수: '),
+              Semantics(
+                label: '주당 시수 선택, 현재 $_weeklyHours시간',
+                value: '$_weeklyHours',
+                child: CupertinoStepper(
+                  value: _weeklyHours.toDouble(),
+                  min: 1,
+                  max: 40,
+                  onChanged: (value) {
+                    setState(() {
+                      _weeklyHours = value.toInt();
                     });
                   },
                 ),
@@ -137,51 +161,41 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
             ],
           ),
           const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.softLavender.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                const ExcludeSemantics(
-                  child: Icon(CupertinoIcons.info_circle, color: AppColors.textSecondary),
-                ),
-                const SizedBox(width: 12),
-                Semantics(
-                  label: '생성될 학급 이름',
-                  value: generatedName,
-                  child: Text(
-                    '미리보기: $generatedName',
-                    style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
-            child: CupertinoButton(
-              color: AppColors.pastelMint,
-              borderRadius: BorderRadius.circular(20),
-              onPressed: () {
-                // TODO: Save logic
+            child: Consumer(
+              builder: (context, ref, child) {
+                return CupertinoButton(
+                  color: AppColors.pastelMint,
+                  borderRadius: BorderRadius.circular(20),
+                  onPressed: () async {
+                    final db = ref.read(databaseProvider);
+                    for (int i = 1; i <= _classCount; i++) {
+                      final generatedName = generateClassName(_selectedCourse, _grade, i);
+                      await db.into(db.schoolClasses).insert(
+                        SchoolClassesCompanion.insert(
+                          course: _selectedCourse,
+                          grade: _grade,
+                          classNumber: i,
+                          className: generatedName,
+                          weeklyTargetHours: _weeklyHours,
+                        ),
+                      );
+                    }
+                  },
+                  child: Semantics(
+                    label: '${_selectedCourse.name} $_grade학년 $_classCount개 학급 추가하기',
+                    button: true,
+                    child: Text(
+                      '학급 추가',
+                      style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                );
               },
-              child: Semantics(
-                label: '$generatedName 학급 추가하기',
-                button: true,
-                child: Text(
-                  '학급 추가',
-                  style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
             ),
           ),
         ],

@@ -3,12 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'theme/app_theme.dart';
 import 'ui/screens/home_screen.dart';
-import 'database/app_database.dart';
-
-// Provider for the database
-final databaseProvider = Provider<AppDatabase>((ref) {
-  return AppDatabase();
-});
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
