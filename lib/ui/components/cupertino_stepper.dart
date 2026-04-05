@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/semantics.dart';
 
 class CupertinoStepper extends StatelessWidget {
   final double value;
@@ -24,28 +23,32 @@ class CupertinoStepper extends StatelessWidget {
     return Semantics(
       label: semanticLabel,
       value: '${value.toInt()}$suffix',
-      onIncrease: value < max ? () => onChanged(value + 1) : null,
-      onDecrease: value > min ? () => onChanged(value - 1) : null,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: value > min ? () => onChanged(value - 1) : null,
-            child: const ExcludeSemantics(child: Icon(CupertinoIcons.minus_circle)),
+          Semantics(
+            label: '$semanticLabel 감소',
+            button: true,
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: value > min ? () => onChanged(value - 1) : null,
+              child: const Icon(CupertinoIcons.minus_circle),
+            ),
           ),
           SizedBox(
             width: 40,
             child: Center(
-              child: ExcludeSemantics(
-                child: Text('${value.toInt()}$suffix'),
-              ),
+              child: Text('${value.toInt()}$suffix'),
             ),
           ),
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: value < max ? () => onChanged(value + 1) : null,
-            child: const ExcludeSemantics(child: Icon(CupertinoIcons.add_circled)),
+          Semantics(
+            label: '$semanticLabel 증가',
+            button: true,
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: value < max ? () => onChanged(value + 1) : null,
+              child: const Icon(CupertinoIcons.add_circled),
+            ),
           ),
         ],
       ),
