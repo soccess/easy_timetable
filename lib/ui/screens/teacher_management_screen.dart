@@ -5,6 +5,7 @@ import '../../providers/database_providers.dart';
 import '../../database/app_database.dart';
 import '../../theme/app_colors.dart';
 import '../components/cute_card.dart';
+import '../components/cupertino_stepper.dart';
 
 class TeacherManagementScreen extends ConsumerStatefulWidget {
   const TeacherManagementScreen({super.key});
@@ -62,24 +63,13 @@ class _TeacherManagementScreenState extends ConsumerState<TeacherManagementScree
                     Row(
                       children: [
                         const Text('주당 시수: '),
-                        Semantics(
-                          label: '주당 시수 선택, 현재 $_weeklyHours시간',
-                          value: '$_weeklyHours',
-                          child: Row(
-                            children: [
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: _weeklyHours > 1 ? () => setState(() => _weeklyHours--) : null,
-                                child: const ExcludeSemantics(child: Icon(CupertinoIcons.minus_circle)),
-                              ),
-                              SizedBox(width: 40, child: Center(child: Text('$_weeklyHours'))),
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: _weeklyHours < 40 ? () => setState(() => _weeklyHours++) : null,
-                                child: const ExcludeSemantics(child: Icon(CupertinoIcons.add_circled)),
-                              ),
-                            ],
-                          ),
+                        CupertinoStepper(
+                          semanticLabel: '주당 시수',
+                          suffix: '시간',
+                          value: _weeklyHours.toDouble(),
+                          min: 1,
+                          max: 40,
+                          onChanged: (value) => setState(() => _weeklyHours = value.toInt()),
                         ),
                       ],
                     ),

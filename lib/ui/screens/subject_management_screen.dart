@@ -5,6 +5,7 @@ import '../../database/app_database.dart';
 import '../../models/course_type.dart';
 import '../../theme/app_colors.dart';
 import '../components/cute_card.dart';
+import '../components/cupertino_stepper.dart';
 
 class SubjectManagementScreen extends ConsumerStatefulWidget {
   const SubjectManagementScreen({super.key});
@@ -54,7 +55,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
             },
             children: List<Widget>.generate(CourseType.values.length, (int index) {
               return Center(
-                child: Text(CourseType.values[index].name),
+                child: Text(CourseType.values[index].displayName),
               );
             }),
           ),
@@ -103,7 +104,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                     ),
                     const SizedBox(height: 20),
                     Semantics(
-                      label: '과정 선택 버튼, 현재 ${_selectedCourse.name}',
+                      label: '과정 선택 버튼, 현재 ${_selectedCourse.displayName}',
                       button: true,
                       child: CupertinoButton(
                         padding: EdgeInsets.zero,
@@ -111,7 +112,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('과정: ${_selectedCourse.name}'),
+                            Text('과정: ${_selectedCourse.displayName}'),
                             const SizedBox(width: 8),
                             const Icon(CupertinoIcons.chevron_down, size: 16),
                           ],
@@ -122,24 +123,13 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                     Row(
                       children: [
                         const Text('학년: '),
-                        Semantics(
-                          label: '학년 선택, 현재 $_grade학년',
-                          value: '$_grade',
-                          child: Row(
-                            children: [
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: _grade > _selectedCourse.minGrade ? () => setState(() => _grade--) : null,
-                                child: const ExcludeSemantics(child: Icon(CupertinoIcons.minus_circle)),
-                              ),
-                              SizedBox(width: 40, child: Center(child: Text('$_grade'))),
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: _grade < _selectedCourse.maxGrade ? () => setState(() => _grade++) : null,
-                                child: const ExcludeSemantics(child: Icon(CupertinoIcons.add_circled)),
-                              ),
-                            ],
-                          ),
+                        CupertinoStepper(
+                          semanticLabel: '학년 선택',
+                          suffix: '학년',
+                          value: _grade.toDouble(),
+                          min: _selectedCourse.minGrade.toDouble(),
+                          max: _selectedCourse.maxGrade.toDouble(),
+                          onChanged: (value) => setState(() => _grade = value.toInt()),
                         ),
                       ],
                     ),
@@ -156,24 +146,13 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                     Row(
                       children: [
                         const Text('주당 시수: '),
-                        Semantics(
-                          label: '주당 시수 선택, 현재 $_weeklyHours시간',
-                          value: '$_weeklyHours',
-                          child: Row(
-                            children: [
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: _weeklyHours > 1 ? () => setState(() => _weeklyHours--) : null,
-                                child: const ExcludeSemantics(child: Icon(CupertinoIcons.minus_circle)),
-                              ),
-                              SizedBox(width: 40, child: Center(child: Text('$_weeklyHours'))),
-                              CupertinoButton(
-                                padding: EdgeInsets.zero,
-                                onPressed: _weeklyHours < 40 ? () => setState(() => _weeklyHours++) : null,
-                                child: const ExcludeSemantics(child: Icon(CupertinoIcons.add_circled)),
-                              ),
-                            ],
-                          ),
+                        CupertinoStepper(
+                          semanticLabel: '주당 시수',
+                          suffix: '시간',
+                          value: _weeklyHours.toDouble(),
+                          min: 1,
+                          max: 40,
+                          onChanged: (value) => setState(() => _weeklyHours = value.toInt()),
                         ),
                       ],
                     ),
@@ -217,7 +196,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
               data: (subjects) {
                 final groupedSubjects = <String, List<Subject>>{};
                 for (final s in subjects) {
-                  final key = '${s.course.name} ${s.grade}학년';
+                  final key = '${s.course.displayName} ${s.grade}학년';
                   if (!groupedSubjects.containsKey(key)) {
                     groupedSubjects[key] = [];
                   }
@@ -360,7 +339,7 @@ class _BatchCopyDialogState extends ConsumerState<_BatchCopyDialog> {
     _allTargets = [];
     for (var course in CourseType.values) {
       for (int g = course.minGrade; g <= course.maxGrade; g++) {
-        _allTargets.add('${course.name} $g학년');
+        _allTargets.add('${course.displayName} $g학년');
       }
     }
   }
@@ -429,7 +408,7 @@ class _BatchCopyDialogState extends ConsumerState<_BatchCopyDialog> {
               final gradeStr = parts[1].replaceAll('학년', '');
               final grade = int.parse(gradeStr);
 
-              final course = CourseType.values.firstWhere((c) => c.name == courseName);
+              final course = CourseType.values.firstWhere((c) => c.displayName == courseName);
 
               for (final subjectToCopy in widget.selectedSubjects) {
                 // Check if identical subject already exists in target

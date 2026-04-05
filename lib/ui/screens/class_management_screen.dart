@@ -35,7 +35,7 @@ class ClassManagementScreen extends StatelessWidget {
                     // Group classes by course and grade
                     final groupedClasses = <String, List<dynamic>>{};
                     for (final c in classes) {
-                      final key = '${c.course.name} ${c.grade}학년 (${c.weeklyTargetHours}시간)';
+                      final key = '${c.course.displayName} ${c.grade}학년 (${c.weeklyTargetHours}시간)';
                       if (!groupedClasses.containsKey(key)) {
                         groupedClasses[key] = [];
                       }

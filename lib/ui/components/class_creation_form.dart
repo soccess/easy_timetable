@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/course_type.dart';
 import '../../utils/class_name_generator.dart';
 import '../../theme/app_colors.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/database_providers.dart';
 import '../../database/app_database.dart';
 import 'cute_card.dart';
+import 'cupertino_stepper.dart';
 
 class ClassCreationForm extends StatefulWidget {
   const ClassCreationForm({super.key});
@@ -62,7 +63,7 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
             },
             children: List<Widget>.generate(CourseType.values.length, (int index) {
               return Center(
-                child: Text(CourseType.values[index].name),
+                child: Text(CourseType.values[index].displayName),
               );
             }),
           ),
@@ -85,7 +86,7 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
           ),
           const SizedBox(height: 20),
           Semantics(
-            label: '과정 선택 버튼, 현재 $_selectedCourse',
+            label: '과정 선택 버튼, 현재 ${_selectedCourse.displayName}',
             button: true,
             child: CupertinoButton(
               padding: EdgeInsets.zero,
@@ -93,7 +94,7 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('과정: ${_selectedCourse.name}'),
+                  Text('과정: ${_selectedCourse.displayName}'),
                   const SizedBox(width: 8),
                   const ExcludeSemantics(child: Icon(CupertinoIcons.chevron_down, size: 16)),
                 ],
@@ -104,19 +105,17 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
           Row(
             children: [
               Text('학년: '),
-              Semantics(
-                label: '학년 선택, 현재 $_grade학년',
-                value: '$_grade',
-                child: CupertinoStepper(
-                  value: _grade.toDouble(),
-                  min: _selectedCourse.minGrade.toDouble(),
-                  max: _selectedCourse.maxGrade.toDouble(),
-                  onChanged: (value) {
-                    setState(() {
-                      _grade = value.toInt();
-                    });
-                  },
-                ),
+              CupertinoStepper(
+                semanticLabel: '학년 선택',
+                suffix: '학년',
+                value: _grade.toDouble(),
+                min: _selectedCourse.minGrade.toDouble(),
+                max: _selectedCourse.maxGrade.toDouble(),
+                onChanged: (value) {
+                  setState(() {
+                    _grade = value.toInt();
+                  });
+                },
               ),
             ],
           ),
@@ -124,19 +123,17 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
           Row(
             children: [
               Text('생성할 반 개수: '),
-              Semantics(
-                label: '생성할 반 개수 선택, 현재 $_classCount개',
-                value: '$_classCount',
-                child: CupertinoStepper(
-                  value: _classCount.toDouble(),
-                  min: 1,
-                  max: 20,
-                  onChanged: (value) {
-                    setState(() {
-                      _classCount = value.toInt();
-                    });
-                  },
-                ),
+              CupertinoStepper(
+                semanticLabel: '생성할 반 개수',
+                suffix: '개',
+                value: _classCount.toDouble(),
+                min: 1,
+                max: 20,
+                onChanged: (value) {
+                  setState(() {
+                    _classCount = value.toInt();
+                  });
+                },
               ),
             ],
           ),
@@ -144,19 +141,17 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
           Row(
             children: [
               Text('주당 시수: '),
-              Semantics(
-                label: '주당 시수 선택, 현재 $_weeklyHours시간',
-                value: '$_weeklyHours',
-                child: CupertinoStepper(
-                  value: _weeklyHours.toDouble(),
-                  min: 1,
-                  max: 40,
-                  onChanged: (value) {
-                    setState(() {
-                      _weeklyHours = value.toInt();
-                    });
-                  },
-                ),
+              CupertinoStepper(
+                semanticLabel: '주당 시수',
+                suffix: '시간',
+                value: _weeklyHours.toDouble(),
+                min: 1,
+                max: 40,
+                onChanged: (value) {
+                  setState(() {
+                    _weeklyHours = value.toInt();
+                  });
+                },
               ),
             ],
           ),
@@ -204,43 +199,3 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
   }
 }
 
-// Simple CupertinoStepper implementation since it's not built-in to Cupertino by default
-class CupertinoStepper extends StatelessWidget {
-  final double value;
-  final double min;
-  final double max;
-  final ValueChanged<double> onChanged;
-
-  const CupertinoStepper({
-    super.key,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: value > min ? () => onChanged(value - 1) : null,
-          child: const ExcludeSemantics(child: Icon(CupertinoIcons.minus_circle)),
-        ),
-        SizedBox(
-          width: 40,
-          child: Center(
-            child: Text(value.toInt().toString()),
-          ),
-        ),
-        CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: value < max ? () => onChanged(value + 1) : null,
-          child: const ExcludeSemantics(child: Icon(CupertinoIcons.add_circled)),
-        ),
-      ],
-    );
-  }
-}

@@ -42,7 +42,7 @@ class _TimeAllocationScreenState extends ConsumerState<TimeAllocationScreen> {
             children: List<Widget>.generate(subjects.length, (int index) {
               final s = subjects[index];
               return Center(
-                child: Text('${s.course.name} ${s.grade}학년 ${s.subjectName}'),
+                child: Text('${s.course.displayName} ${s.grade}학년 ${s.subjectName}'),
               );
             }),
           ),
@@ -119,7 +119,7 @@ class _TimeAllocationScreenState extends ConsumerState<TimeAllocationScreen> {
                   onPressed: allSubjects.isEmpty ? null : () => _showSubjectPicker(allSubjects),
                   child: Text(
                     _selectedSubject != null
-                        ? '${_selectedSubject!.course.name} ${_selectedSubject!.grade}학년 ${_selectedSubject!.subjectName}'
+                        ? '${_selectedSubject!.course.displayName} ${_selectedSubject!.grade}학년 ${_selectedSubject!.subjectName}'
                         : '과목을 선택하세요',
                     style: const TextStyle(color: AppColors.textPrimary),
                   ),
