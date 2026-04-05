@@ -7,7 +7,7 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 });
 
 // SchoolClasses Stream Provider
-final schoolClassesProvider = StreamProvider<List<SchoolClass>>((ref) {
+final schoolClassesProvider = StreamProvider<List<SchoolClassesData>>((ref) {
   final db = ref.watch(databaseProvider);
   return db.select(db.schoolClasses).watch();
 });

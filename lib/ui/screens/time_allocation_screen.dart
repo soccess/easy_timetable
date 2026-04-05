@@ -127,7 +127,7 @@ class _TimeAllocationScreenState extends ConsumerState<TimeAllocationScreen> {
               ],
             ),
           ),
-          const Divider(),
+          Container(height: 1, color: CupertinoColors.systemGrey4),
           // Main Grid Area
           Expanded(
             child: _selectedSubject == null
@@ -139,10 +139,10 @@ class _TimeAllocationScreenState extends ConsumerState<TimeAllocationScreen> {
     );
   }
 
-  Widget _buildGrid(List<SchoolClass> allClasses, List<Teacher> allTeachers, List<Allocation> allAllocations) {
+  Widget _buildGrid(List<SchoolClassesData> allClasses, List<Teacher> allTeachers, List<Allocation> allAllocations) {
     // Filter classes matching selected subject's course and grade
     final matchingClasses = allClasses
-        .where((c) => c.course == _selectedSubject!.course && c.grade == _selectedSubject!.grade)
+        .where((c) => _selectedSubject != null && c.course == _selectedSubject!.course && c.grade == _selectedSubject!.grade)
         .toList();
 
     if (matchingClasses.isEmpty) {

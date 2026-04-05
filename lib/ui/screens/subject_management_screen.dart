@@ -196,7 +196,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                           );
                           _subjectNameController.clear();
                         },
-                        child: const Semantics(
+                        child: Semantics(
                           label: '과목 추가 버튼',
                           button: true,
                           child: Text(

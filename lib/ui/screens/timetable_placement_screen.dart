@@ -14,7 +14,7 @@ class TimetablePlacementScreen extends ConsumerStatefulWidget {
 }
 
 class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScreen> {
-  SchoolClass? _selectedClass;
+  SchoolClassesData? _selectedClass;
   Teacher? _selectedTeacher;
 
   final List<String> _days = ['월', '화', '수', '목', '금'];
@@ -106,7 +106,7 @@ class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScr
                         flex: 2,
                         child: _buildClassTimetable(allTimetables, allAllocations, allSubjects, allTeachers),
                       ),
-                      const Divider(),
+                      Container(height: 1, color: CupertinoColors.systemGrey4),
                       // Q3: Class Allocation Cards
                       Expanded(
                         flex: 1,
@@ -115,7 +115,7 @@ class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScr
                     ],
                   ),
                 ),
-                const VerticalDivider(width: 1),
+                Container(width: 1, color: CupertinoColors.systemGrey4),
                 // Right Column (Q2 & Q4)
                 Expanded(
                   child: Column(
@@ -125,7 +125,7 @@ class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScr
                         flex: 2,
                         child: _buildTeacherTimetable(allTimetables, allAllocations, allSubjects, allClasses),
                       ),
-                      const Divider(),
+                      Container(height: 1, color: CupertinoColors.systemGrey4),
                       // Q4: Teacher Allocation Cards
                       Expanded(
                         flex: 1,
@@ -330,8 +330,8 @@ class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScr
 
                 return Draggable<Allocation>(
                   data: a,
-                  feedback: Material(
-                    color: Colors.transparent,
+                  feedback: DefaultTextStyle(
+                    style: CupertinoTheme.of(context).textTheme.textStyle,
                     child: Opacity(
                       opacity: 0.8,
                       child: cardWidget,
@@ -354,7 +354,7 @@ class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScr
     );
   }
 
-  Widget _buildTeacherTimetable(List<Timetable> allTimetables, List<Allocation> allAllocations, List<Subject> allSubjects, List<SchoolClass> allClasses) {
+  Widget _buildTeacherTimetable(List<Timetable> allTimetables, List<Allocation> allAllocations, List<Subject> allSubjects, List<SchoolClassesData> allClasses) {
     return Column(
       children: [
         Padding(
@@ -442,7 +442,7 @@ class _TimetablePlacementScreenState extends ConsumerState<TimetablePlacementScr
     );
   }
 
-  Widget _buildTeacherAllocationCards(List<Allocation> allAllocations, List<Subject> allSubjects, List<SchoolClass> allClasses, List<Timetable> allTimetables) {
+  Widget _buildTeacherAllocationCards(List<Allocation> allAllocations, List<Subject> allSubjects, List<SchoolClassesData> allClasses, List<Timetable> allTimetables) {
     if (_selectedTeacher == null) {
       return const Center(child: Text('반 시간표에서 카드를 클릭하여\n교사를 선택하세요.', textAlign: TextAlign.center));
     }

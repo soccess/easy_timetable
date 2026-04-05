@@ -115,7 +115,7 @@ class _TeacherManagementScreenState extends ConsumerState<TeacherManagementScree
                           );
                           _nameController.clear();
                         },
-                        child: const Semantics(
+                        child: Semantics(
                           label: '교사 등록 버튼',
                           button: true,
                           child: Text(
