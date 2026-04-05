@@ -52,7 +52,7 @@ class _TeacherManagementScreenState extends ConsumerState<TeacherManagementScree
                     ),
                     const SizedBox(height: 20),
                     Semantics(
-                      label: '교사 이름 입력 필드',
+                      label: '교사 이름 입력',
                       child: CupertinoTextField(
                         controller: _nameController,
                         placeholder: '교사 이름 입력',
@@ -62,7 +62,7 @@ class _TeacherManagementScreenState extends ConsumerState<TeacherManagementScree
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        const Text('주당 시수: '),
+                        const ExcludeSemantics(child: Text('주당 시수: ')),
                         CupertinoStepper(
                           semanticLabel: '주당 시수',
                           suffix: '시간',
@@ -76,9 +76,9 @@ class _TeacherManagementScreenState extends ConsumerState<TeacherManagementScree
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        const Text('담임 여부: '),
+                        const ExcludeSemantics(child: Text('담임 여부: ')),
                         Semantics(
-                          label: '담임 여부 선택',
+                          label: '담임 여부',
                           checked: _isHomeroom,
                           child: CupertinoSwitch(
                             value: _isHomeroom,

@@ -104,25 +104,29 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                     ),
                     const SizedBox(height: 20),
                     Semantics(
-                      label: '과정 선택 버튼, 현재 ${_selectedCourse.displayName}',
+                      label: '과정 선택',
+                      value: _selectedCourse.displayName,
                       button: true,
+                      hint: '눌러서 과정을 선택하세요',
                       child: CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: _showCoursePicker,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('과정: ${_selectedCourse.displayName}'),
-                            const SizedBox(width: 8),
-                            const Icon(CupertinoIcons.chevron_down, size: 16),
-                          ],
+                        child: ExcludeSemantics(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('과정: ${_selectedCourse.displayName}'),
+                              const SizedBox(width: 8),
+                              const Icon(CupertinoIcons.chevron_down, size: 16),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        const Text('학년: '),
+                        const ExcludeSemantics(child: Text('학년: ')),
                         CupertinoStepper(
                           semanticLabel: '학년 선택',
                           suffix: '학년',
@@ -135,7 +139,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                     ),
                     const SizedBox(height: 16),
                     Semantics(
-                      label: '과목명 입력 필드',
+                      label: '과목명 입력',
                       child: CupertinoTextField(
                         controller: _subjectNameController,
                         placeholder: '과목명 입력',
@@ -145,7 +149,7 @@ class _SubjectManagementScreenState extends ConsumerState<SubjectManagementScree
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        const Text('주당 시수: '),
+                        const ExcludeSemantics(child: Text('주당 시수: ')),
                         CupertinoStepper(
                           semanticLabel: '주당 시수',
                           suffix: '시간',

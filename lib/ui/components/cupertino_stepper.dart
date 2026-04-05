@@ -20,38 +20,40 @@ class CupertinoStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: semanticLabel,
-      value: '${value.toInt()}$suffix',
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Semantics(
-            label: '$semanticLabel 감소',
-            button: true,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: value > min ? () => onChanged(value - 1) : null,
-              child: const Icon(CupertinoIcons.minus_circle),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Semantics(
+          label: '$semanticLabel 감소',
+          button: true,
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: value > min ? () => onChanged(value - 1) : null,
+            child: const Icon(CupertinoIcons.minus_circle),
+          ),
+        ),
+        SizedBox(
+          width: 40,
+          child: Center(
+            child: Semantics(
+              label: semanticLabel,
+              value: '${value.toInt()}$suffix',
+              child: ExcludeSemantics(
+                child: Text('${value.toInt()}$suffix'),
+              ),
             ),
           ),
-          SizedBox(
-            width: 40,
-            child: Center(
-              child: Text('${value.toInt()}$suffix'),
-            ),
+        ),
+        Semantics(
+          label: '$semanticLabel 증가',
+          button: true,
+          child: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: value < max ? () => onChanged(value + 1) : null,
+            child: const Icon(CupertinoIcons.add_circled),
           ),
-          Semantics(
-            label: '$semanticLabel 증가',
-            button: true,
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: value < max ? () => onChanged(value + 1) : null,
-              child: const Icon(CupertinoIcons.add_circled),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
