@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show DropdownButton, DropdownMenuItem, Material, MaterialType;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/course_type.dart';
 import '../../utils/class_name_generator.dart';
@@ -35,42 +36,6 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
     super.dispose();
   }
 
-  void _showCoursePicker() {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => Container(
-        height: 250,
-        padding: const EdgeInsets.only(top: 6.0),
-        margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        child: SafeArea(
-          top: false,
-          child: CupertinoPicker(
-            magnification: 1.22,
-            squeeze: 1.2,
-            useMagnifier: true,
-            itemExtent: 32.0,
-            onSelectedItemChanged: (int selectedItem) {
-              setState(() {
-                _selectedCourse = CourseType.values[selectedItem];
-                // Reset grade if it exceeds new course max
-                if (_grade > _selectedCourse.maxGrade) {
-                  _grade = _selectedCourse.maxGrade;
-                }
-              });
-            },
-            children: List<Widget>.generate(CourseType.values.length, (int index) {
-              return Center(
-                child: Text(CourseType.values[index].displayName),
-              );
-            }),
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,47 +44,71 @@ class _ClassCreationFormState extends State<ClassCreationForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '새 학급 생성',
-            style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
-            semanticsLabel: '새 학급 생성 양식',
+          Semantics(
+            header: true,
+            child: Text(
+              '새 학급 생성',
+              style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
+            ),
           ),
           const SizedBox(height: 20),
-          Semantics(
-            label: '과정 선택',
-            value: _selectedCourse.displayName,
-            button: true,
-            hint: '눌러서 과정을 선택하세요',
-            child: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: _showCoursePicker,
-              child: ExcludeSemantics(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('과정: ${_selectedCourse.displayName}'),
-                    const SizedBox(width: 8),
-                    const Icon(CupertinoIcons.chevron_down, size: 16),
-                  ],
+          Row(
+            children: [
+              const ExcludeSemantics(child: Text('과정: ')),
+              const SizedBox(width: 8),
+              Material(
+                type: MaterialType.transparency,
+                child: Semantics(
+                  label: '과정 선택',
+                  child: DropdownButton<CourseType>(
+                    value: _selectedCourse,
+                    items: CourseType.values.map((CourseType course) {
+                      return DropdownMenuItem<CourseType>(
+                        value: course,
+                        child: Text(course.displayName),
+                      );
+                    }).toList(),
+                    onChanged: (CourseType? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedCourse = newValue;
+                          if (_grade > _selectedCourse.maxGrade) {
+                            _grade = _selectedCourse.maxGrade;
+                          }
+                        });
+                      }
+                    },
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               const ExcludeSemantics(child: Text('학년: ')),
-              CupertinoStepper(
-                semanticLabel: '학년 선택',
-                suffix: '학년',
-                value: _grade.toDouble(),
-                min: _selectedCourse.minGrade.toDouble(),
-                max: _selectedCourse.maxGrade.toDouble(),
-                onChanged: (value) {
-                  setState(() {
-                    _grade = value.toInt();
-                  });
-                },
+              const SizedBox(width: 8),
+              Material(
+                type: MaterialType.transparency,
+                child: Semantics(
+                  label: '학년 선택',
+                  child: DropdownButton<int>(
+                    value: _grade,
+                    items: List.generate(_selectedCourse.maxGrade, (index) => index + 1).map((int g) {
+                      return DropdownMenuItem<int>(
+                        value: g,
+                        child: Text('$g학년'),
+                      );
+                    }).toList(),
+                    onChanged: (int? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _grade = newValue;
+                        });
+                      }
+                    },
+                  ),
+                ),
               ),
             ],
           ),

@@ -26,6 +26,7 @@ class CupertinoStepper extends StatelessWidget {
         Semantics(
           label: '$semanticLabel 감소',
           button: true,
+          excludeSemantics: true,
           child: CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: value > min ? () => onChanged(value - 1) : null,
@@ -47,6 +48,7 @@ class CupertinoStepper extends StatelessWidget {
         Semantics(
           label: '$semanticLabel 증가',
           button: true,
+          excludeSemantics: true,
           child: CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: value < max ? () => onChanged(value + 1) : null,

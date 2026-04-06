@@ -44,7 +44,7 @@ class _TeacherManagementScreenState extends ConsumerState<TeacherManagementScree
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Semantics(
-                      label: '새 교사 등록 양식',
+                      header: true,
                       child: Text(
                         '새 교사 등록',
                         style: CupertinoTheme.of(context).textTheme.navTitleTextStyle,
